@@ -18,8 +18,8 @@ def Extract_info(rec):
   #Skip non-empty OTHER_ID or emtpy transaction amount
   if rec_spl[15] != '' or rec_spl[14] == '':
     return []
-  #Skip negative transaction amount
-  if float(rec_spl[14]) < 0:
+  #Skip negative or zero transaction amount
+  if float(rec_spl[14]) <= 0:
     return []
 
   zip_code_match = re.match(r"\w{5}",rec_spl[10])
@@ -113,10 +113,10 @@ def Make_text_line(rec_or_dict, k = ''):
     return k.split(delimiter_dict_key)[0] + '|' + k.split(delimiter_dict_key)[1] + '|' + str(rec_or_dict[0]) + '|' + str(rec_or_dict[1]) + '|'+ str(rec_or_dict[2]) + '|' + rec_or_dict[3] + '\n'
 
 
-#n_chunk starts from 0
 def Update_date_records_write_to_file(n_chunk, date_data_dict, fOut_date_name_prefix):
+  "Update an extracted record to the dictionary of total number of contribution, total amount of contributions, median of contribution and all contribution amount seen"
   
-  chunk_size_read_line = 10000
+  chunk_size_read_line = 10000 #used to read previous file of previous data chunk. This is the amount of lines is read and processed each time
   
   #first chunk, write to file
   if n_chunk == 1:
@@ -227,7 +227,6 @@ fOut_date_name_prefix_chunk = 'Tmp/date_data_tmp'
 zip_records = []
 zip_running_vals = {} 
 
-#date_records = []
 date_running_vals = {}
 
 countLine = 0
